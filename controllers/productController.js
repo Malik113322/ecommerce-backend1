@@ -28,29 +28,21 @@ cloudinary.config({
 export const createProductController = async (req, res) => {
  try {
   const { name, description, price, category, quantity, shipping } = req.body;
-  // const file = req.files.image;
-  // cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
-  //   const product = new ProductModel({
-  //     name,
-  //     image: result.url,
-  //     slug: slugify(name),
-  //     description,
-  //     price,
-  //     category,
-  //     quantity,
-  //     shipping,
-  //   });
-  //   await product.save();
-   const product = await new ProductModel({
-    name, 
-    slug: slugify(name),
-    description,
+  const file = req.files.image;
+  cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
+    const product = new ProductModel({
+      name,
+      image: result.url,
+      slug: slugify(name),
+      description,
       price,
       category,
       quantity,
       shipping,
-  }).save();
-    return res.status(201).send({
+    });
+    await product.save();
+   
+     res.status(201).send({
       success: "true",
       message: "successfully created",
       product,
