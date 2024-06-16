@@ -15,7 +15,7 @@ import {
   updateProductController,
 } from "../controllers/productController.js";
 
-import {requireSign} from "../middleware/authMiddleware.js";
+import {isAdmin, requireSign} from "../middleware/authMiddleware.js";
 
 // router object
 const router = express.Router();

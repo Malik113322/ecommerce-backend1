@@ -10,10 +10,12 @@ import productRoutes from "./routes/productRoutes.js";
 import fileupload from "express-fileupload";
 
 
+
 // configure env
 dotenv.config();
 // rest object
 const app = express();
+app.use(cors());
 
 // database config
 connectDB();
@@ -25,7 +27,6 @@ app.use(fileupload({
 
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors());
 
 // routes
 app.use("/api/v1/auth", authRoute);

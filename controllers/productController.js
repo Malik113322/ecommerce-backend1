@@ -26,6 +26,7 @@ cloudinary.config({
 });
 
 export const createProductController = async (req, res) => {
+ try {
   const { name, description, price, category, quantity, shipping } = req.body;
   const file = req.files.image;
   cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
@@ -46,6 +47,9 @@ export const createProductController = async (req, res) => {
       product,
     });
   });
+ } catch (error) {
+  console.log(error);
+ }
 };
 
 // get products
