@@ -22,7 +22,7 @@ const router = express.Router();
 
 // router || POST
 // creating a product
-router.post("/create-product", createProductController);
+router.post("/create-product",requireSign, isAdmin, createProductController);
 
 // get products || GET
 router.get("/get-products", getProductController);
