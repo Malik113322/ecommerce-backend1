@@ -20,7 +20,7 @@ var gateway = new braintree.BraintreeGateway({
 // create-product
 // for image upload
 cloudinary.config({
-  cloud_name: "dzg8wohnb",
+  cloud_name: process.env.CLOUD_NAME,
   api_key: "524223246331484",
   api_secret: "YzzDJCEUjauFXhS-kiYRyD2wLw0",
 });
