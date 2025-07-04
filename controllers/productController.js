@@ -21,7 +21,7 @@ var gateway = new braintree.BraintreeGateway({
 // for image upload
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
-  api_key: "524223246331484",
+  api_key: "",
   api_secret: "YzzDJCEUjauFXhS-kiYRyD2wLw0",
 });
 
