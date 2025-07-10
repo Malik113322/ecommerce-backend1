@@ -11,8 +11,8 @@ dotenv.configDotenv();
 
 
 
-create-product
-for image upload
+// create-product
+// for image upload
 cloudinary.config({
   cloud_name: "dzg8wohnb",
   api_key: "524223246331484",
