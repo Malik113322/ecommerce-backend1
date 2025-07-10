@@ -29,9 +29,9 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // routes
-app.use("api/v1/auth", authRoute);
-app.use("api/v1/category", categoryRoute);
-app.use("api/v1/product", productRoutes);
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/category", categoryRoute);
+app.use("/api/v1/product", productRoutes);
 
 app.get("/", (req, res)=>{
   res.json({message:"working"})
