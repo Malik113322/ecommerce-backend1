@@ -55,6 +55,4 @@ router.get("/category-product/:slug", categoryProductController);
 
 // payment routes
 
-
-
 export default router;
