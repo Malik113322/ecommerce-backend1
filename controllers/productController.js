@@ -13,10 +13,16 @@ dotenv.configDotenv();
 
 // create-product
 // for image upload
+// cloudinary.config({
+//   cloud_name: process.env.CLOUD_NAME_CLOUDINARY,
+//   api_key: '524223246331484',
+//   api_secret: process.env.PRIVATE_KEY_CLOUDINARY,
+// });
+
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME_CLOUDINARY,
+  cloud_name: 'dzg8wohnb',
   api_key: '524223246331484',
-  api_secret: process.env.PRIVATE_KEY_CLOUDINARY,
+  api_secret:'YzzDJCEUjauFXhS-kiYRyD2wLw0',
 });
 
 export const createProductController = async (req, res) => {
