@@ -15,7 +15,13 @@ import fileupload from "express-fileupload";
 dotenv.config();
 // rest object
 const app = express();
+app.use(function (request, response, next) {
+  response.header("Access-Control-Allow-Origin", "*");
+  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 app.use(cors());
+
 
 // database config
 connectDB();
