@@ -33,9 +33,9 @@ const productSchema = new mongoose.Schema(
     shipping: {
       type: Boolean,
     },
-    qty: {
-      type: Number,
-    },
+    qty:{
+      type:Number
+    }
   },
   { timestamps: true }
 );
