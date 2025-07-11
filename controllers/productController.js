@@ -15,7 +15,7 @@ dotenv.configDotenv();
 // for image upload
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME_CLOUDINARY,
-  api_key: process.env.PUBLIC_KEY_CLOUDINARY,
+  api_key: '524223246331484',
   api_secret: process.env.PRIVATE_KEY_CLOUDINARY,
 });
 
