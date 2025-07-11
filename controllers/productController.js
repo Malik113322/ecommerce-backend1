@@ -15,7 +15,7 @@ dotenv.configDotenv();
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME_CLOUDINARY,
   api_key: '524223246331484,
-  api_secret: process.env.YzzDJCEUjauFXhS-kiYRyD2wLw0,
+  api_secret: process.env.PRIVATE_KEY_CLOUDINARY,
 });
 
 export const createProductController = async (req, res) => {
