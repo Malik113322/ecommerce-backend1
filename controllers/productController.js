@@ -5,6 +5,11 @@ import categoryModel from "../models/categoryModel.js";
 import dotenv from "dotenv";
 
 dotenv.configDotenv();
+
+// paymet getway braintree
+
+
+
 // create-product
 // for image upload
 cloudinary.config({
@@ -226,4 +231,9 @@ export const categoryProductController = async (req, res) => {
     console.log(error);
   }
 };
+
+
+
+
+
 
