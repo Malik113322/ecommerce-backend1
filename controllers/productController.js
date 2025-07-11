@@ -49,7 +49,7 @@ export const createProductController = async (req, res) => {
 // get products
 export const getProductController = async (req, res) => {
   try {
-    const products = await ProductModel.find({})
+    const products = await ProductModel.find()
       .populate("category")
       .sort({ createdAt: -1 });
     return res.status(200).send({
