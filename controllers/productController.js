@@ -3,19 +3,14 @@ import { v2 as cloudinary } from "cloudinary";
 import slugify from "slugify";
 import categoryModel from "../models/categoryModel.js";
 import dotenv from "dotenv";
-import orderModel from "../models/orderModel.js";
 
 dotenv.configDotenv();
-
-// payment stripe
-
-
 // create-product
 // for image upload
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME_CLOUDINARY,
-  api_key: process.env.PUBLIC_KEY_CLOUDINARY,
-  api_secret: process.env.PRIVATE_KEY_CLOUDINARY,
+  cloud_name: "dzg8wohnb",
+  api_key: "524223246331484",
+  api_secret: "YzzDJCEUjauFXhS-kiYRyD2wLw0",
 });
 
 export const createProductController = async (req, res) => {
@@ -46,7 +41,7 @@ export const createProductController = async (req, res) => {
  }
 };
 
-// get products 
+// get products
 export const getProductController = async (req, res) => {
   try {
     const products = await ProductModel.find({})
@@ -231,5 +226,4 @@ export const categoryProductController = async (req, res) => {
     console.log(error);
   }
 };
-
 
