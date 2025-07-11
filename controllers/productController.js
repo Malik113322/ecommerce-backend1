@@ -4,25 +4,20 @@ import slugify from "slugify";
 import categoryModel from "../models/categoryModel.js";
 import dotenv from "dotenv";
 import orderModel from "../models/orderModel.js";
+import Stripe from "stripe";
 
 dotenv.configDotenv();
 
-// paymet getway braintree
-
+// payment stripe
+const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
 
 
 // create-product
 // for image upload
-// cloudinary.config({
-//   cloud_name: process.env.CLOUD_NAME_CLOUDINARY,
-//   api_key: '524223246331484',
-//   api_secret: process.env.PRIVATE_KEY_CLOUDINARY,
-// });
-
 cloudinary.config({
-  cloud_name: 'dzg8wohnb',
-  api_key: '524223246331484',
-  api_secret:'YzzDJCEUjauFXhS-kiYRyD2wLw0',
+  cloud_name: process.env.CLOUD_NAME_CLOUDINARY,
+  api_key: process.env.PUBLIC_KEY_CLOUDINARY,
+  api_secret: process.env.PRIVATE_KEY_CLOUDINARY,
 });
 
 export const createProductController = async (req, res) => {
@@ -54,7 +49,7 @@ export const createProductController = async (req, res) => {
  }
 };
 
-// get products
+// get products 
 export const getProductController = async (req, res) => {
   try {
     const products = await ProductModel.find({})
@@ -241,7 +236,34 @@ export const categoryProductController = async (req, res) => {
 };
 
 
+export const stripePaymentController = async(req, res)=>{
+  try {
+    const {products} = req.body;
+    console.log(products)
+    const lineItems = products.map((p)=>({
+      price_data:{
+        currency:"usd",
+        product_data:{
+          name:p.name
+        },
+        unit_amount:p.price
+      },
+      quantity: p.qty
+    }));
 
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types:['card'],
+      line_items:lineItems,
+      mode:'payment',
+      success_url:'http://localhost:3000/success',
+      cancel_url:'http://localhost:3000/cancle'
+    })
+    console.log(products)
+    res.json({
+      id:session.id
+    })
 
-
-
+  } catch (error) {
+    console.log(error)
+  }
+}
