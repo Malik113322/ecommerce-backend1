@@ -14,7 +14,7 @@ dotenv.configDotenv();
 // for image upload
 cloudinary.config({
   cloud_name: 'dzg8wohnb',
-  api_key: '524223246331484,
+  api_key: '524223246331484',
   api_secret: 'YzzDJCEUjauFXhS-kiYRyD2wLw0',
 });
 
