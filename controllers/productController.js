@@ -39,6 +39,7 @@ export const createProductController = async (req, res) => {
       category,
       quantity,
       shipping,
+      qty:1
     });
     await product.save();
    
