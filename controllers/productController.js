@@ -4,12 +4,10 @@ import slugify from "slugify";
 import categoryModel from "../models/categoryModel.js";
 import dotenv from "dotenv";
 import orderModel from "../models/orderModel.js";
-import Stripe from "stripe";
 
 dotenv.configDotenv();
 
 // payment stripe
-const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
 
 
 // create-product
@@ -236,34 +234,3 @@ export const categoryProductController = async (req, res) => {
 };
 
 
-export const stripePaymentController = async(req, res)=>{
-  try {
-    const {products} = req.body;
-    console.log(products)
-    const lineItems = products.map((p)=>({
-      price_data:{
-        currency:"usd",
-        product_data:{
-          name:p.name
-        },
-        unit_amount:p.price
-      },
-      quantity: p.qty
-    }));
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types:['card'],
-      line_items:lineItems,
-      mode:'payment',
-      success_url:'http://localhost:3000/success',
-      cancel_url:'http://localhost:3000/cancle'
-    })
-    console.log(products)
-    res.json({
-      id:session.id
-    })
-
-  } catch (error) {
-    console.log(error)
-  }
-}
