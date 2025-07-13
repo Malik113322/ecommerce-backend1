@@ -3,11 +3,16 @@ import { v2 as cloudinary } from "cloudinary";
 import slugify from "slugify";
 import categoryModel from "../models/categoryModel.js";
 import dotenv from "dotenv";
+import Stripe from "stripe";
 
 dotenv.configDotenv();
 
-// paymet getway braintree
+// payment stripe
+const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
 
+
+// create-product
+// for image upload
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME_CLOUDINARY,
   api_key: process.env.PUBLIC_KEY_CLOUDINARY,
@@ -28,6 +33,7 @@ export const createProductController = async (req, res) => {
       category,
       quantity,
       shipping,
+      qty:1
     });
     await product.save();
    
@@ -35,20 +41,20 @@ export const createProductController = async (req, res) => {
       success: "true",
       message: "successfully created",
       product,
-    });
+    });         
   });
  } catch (error) {
   console.log(error);
  }
 };
 
-// get products
+// get products 
 export const getProductController = async (req, res) => {
   try {
     const products = await ProductModel.find({})
       .populate("category")
       .sort({ createdAt: -1 });
-       res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "successfully get products",
       total: products.length,
@@ -56,7 +62,7 @@ export const getProductController = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(404).send({
+    return res.status(404).send({
       success: false,
       message: "products not found",
     });
@@ -67,7 +73,7 @@ export const getProductController = async (req, res) => {
 export const getSingleProductController = async (req, res) => {
   try {
     const product = await ProductModel.find({ slug: req.params.slug });
-      res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "successfully get single product",
       product,
@@ -95,7 +101,7 @@ export const updateProductController = async (req, res) => {
       { new: true }
     );
 
-      res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "successfully update",
       product,
@@ -110,7 +116,7 @@ export const deleteProductController = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await ProductModel.findByIdAndDelete(id);
-      res.status(201).send({
+    return res.status(201).send({
       success: true,
       message: "successfully deleted",
       product,
@@ -134,7 +140,7 @@ export const productFilterController = async (req, res) => {
     if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
     const products = await ProductModel.find(args);
 
-      res.status(200).send({
+    return res.status(200).send({
       success: true,
       products,
     });
@@ -147,7 +153,7 @@ export const productFilterController = async (req, res) => {
 export const productCountController = async (req, res) => {
   try {
     const total = await ProductModel.find({}).estimatedDocumentCount();
-      res.status(200).send({
+    return res.status(200).send({
       success: true,
       total,
     });
@@ -165,7 +171,7 @@ export const productListController = async (req, res) => {
       .skip((page - 1) * perPage)
       .limit(perPage)
       .sort({ createdAt: -1 });
-      res.status(200).send({
+    return res.status(200).send({
       success: true,
       products,
     });
@@ -186,7 +192,7 @@ export const productSearchController = async (req, res) => {
       ],
     });
 
-      res.status(200).send({
+    return res.status(200).send({
       success: true,
       results,
     });
@@ -206,7 +212,7 @@ export const similarProductController = async (req, res) => {
       .populate("category")
       .limit(2);
 
-    res.status(200).send(products);
+    return res.status(200).send(products);
   } catch (error) {
     console.log(error);
   }
@@ -219,7 +225,7 @@ export const categoryProductController = async (req, res) => {
     const category = await categoryModel.findOne({ slug: req.params.slug });
     const product = await ProductModel.find({ category }).populate("category");
 
-      res.status(200).send({
+    return res.status(200).send({
       product,
       category,
     });
@@ -229,7 +235,32 @@ export const categoryProductController = async (req, res) => {
 };
 
 
+export const stripePaymentController = async(req, res)=>{
+  try {
+    const {products} = req.body;
+    const lineItems = products.map((p)=>({
+      price_data:{
+        currency:"usd",
+        product_data:{
+          name:p.name
+        },
+        unit_amount:p.price*100
+      },
+      quantity: p.qty
+    }));
 
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types:['card'],
+      line_items:lineItems,
+      mode:'payment',
+      success_url:'http://localhost:3000/success',
+      cancel_url:'http://localhost:3000/cancle'
+    })
+    res.json({
+      id:session.id
+    })
 
-
-
+  } catch (error) {
+    console.log(error)
+  }
+}
