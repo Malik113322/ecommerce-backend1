@@ -10,6 +10,7 @@ import {
   productListController,
   productSearchController,
   similarProductController,
+  stripePaymentController,
   updateProductController,
 } from "../controllers/productController.js";
 
@@ -54,5 +55,7 @@ router.get("/similar-products/:pid/:cid", similarProductController);
 router.get("/category-product/:slug", categoryProductController);
 
 // payment routes
+
+router.post('/api/create-checkout-session', stripePaymentController);
 
 export default router;
