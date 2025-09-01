@@ -13,23 +13,23 @@ export const registerController = async (req, res) => {
 
     }
     if (!email) {
-      return res.send({ error: "error in email" });
+       res.send({ error: "error in email" });
 
     }
     if (!password) {
-      return res.send({ error: "error in password" });
+      res.send({ error: "error in password" });
 
     }
     if (!phone) {
-      return res.send({ error: "error in phone" });
+       res.send({ error: "error in phone" });
 
     }
     if (!address) {
-      return res.send({ error: "error in address" });
+       res.send({ error: "error in address" });
 
     }
     if (!answer) {
-      return res.send({ error: "error in answer" });
+       res.send({ error: "error in answer" });
 
     }
 
@@ -37,11 +37,10 @@ export const registerController = async (req, res) => {
     const exisitingUser = await userModel.findOne({ email });
 
     if (exisitingUser) {
-      res.status(201).send({
+      res.status(200).send({
         success: true,
         message: "Allready registered!",
       });
-      return;
     }
 
     // hasingPassword
@@ -62,13 +61,11 @@ export const registerController = async (req, res) => {
       message: "successfully register!",
       user,
     });
-    return;
   } catch (error) {
     res.status(404).send({
       success: false,
       message: "error in registration",
     });
-    return;
   }
 };
 
@@ -79,7 +76,7 @@ export const loginController = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(404).send({
+       res.status(404).send({
         success: false,
         message: "email or password wrong",
       });
@@ -92,7 +89,6 @@ export const loginController = async (req, res) => {
         success: false,
         message: "email id not registered",
       });
-      return;
     }
 
     //match password
@@ -104,7 +100,6 @@ export const loginController = async (req, res) => {
         success: false,
         message: "password invalid",
       });
-      return;
     }
 
     //token
@@ -113,7 +108,7 @@ export const loginController = async (req, res) => {
       expiresIn: "7d",
     });
 
-    return res.status(201).send({
+    ]res.status(201).send({
       success: true,
       message: "successfully login",
       user: {
@@ -132,14 +127,12 @@ export const loginController = async (req, res) => {
       success: false,
       message: "error in login!",
     });
-    return;
   }
 };
 
 // test
 export const testController = async (req, res) => {
   res.send("protected route!");
-  return;
 };
 
 // forget password controller
@@ -150,20 +143,20 @@ export const forgetPasswordController = async (req, res) => {
 
     //validation
     if (!email) {
-      return res.send({ message: "error in email" });
+       res.send({ message: "error in email" });
 
     }
     if (!answer) {
-      return res.send({ message: "error in answer" });
+       res.send({ message: "error in answer" });
     }
     if (!newPassword) {
-      return res.send({ message: "error in newPassword" });
+       res.send({ message: "error in newPassword" });
     }
 
     //check
     const user = await userModel.findOne({ email, answer });
     if (!user) {
-      return res.status(400).send({
+       res.status(400).send({
         success: false,
         message: "wrong email or answer",
       });
@@ -177,14 +170,12 @@ export const forgetPasswordController = async (req, res) => {
       success: true,
       message: "successfully reset password",
     });
-    return;
   } catch (error) {
     console.log(error);
     res.status(404).send({
       success: false,
       message: "error in forget password",
     });
-    return;
   }
 };
 
