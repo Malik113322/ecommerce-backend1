@@ -54,7 +54,7 @@ export const getProductController = async (req, res) => {
     const products = await ProductModel.find({})
       .populate("category")
       .sort({ createdAt: -1 });
-    return res.status(200).send({
+      res.status(200).send({
       success: true,
       message: "successfully get products",
       total: products.length,
@@ -62,7 +62,7 @@ export const getProductController = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).send({
+      res.status(404).send({
       success: false,
       message: "products not found",
     });
@@ -73,7 +73,7 @@ export const getProductController = async (req, res) => {
 export const getSingleProductController = async (req, res) => {
   try {
     const product = await ProductModel.find({ slug: req.params.slug });
-    return res.status(200).send({
+      res.status(200).send({
       success: true,
       message: "successfully get single product",
       product,
@@ -101,7 +101,7 @@ export const updateProductController = async (req, res) => {
       { new: true }
     );
 
-    return res.status(200).send({
+      res.status(200).send({
       success: true,
       message: "successfully update",
       product,
@@ -116,7 +116,7 @@ export const deleteProductController = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await ProductModel.findByIdAndDelete(id);
-    return res.status(201).send({
+      res.status(201).send({
       success: true,
       message: "successfully deleted",
       product,
@@ -140,7 +140,7 @@ export const productFilterController = async (req, res) => {
     if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
     const products = await ProductModel.find(args);
 
-    return res.status(200).send({
+      res.status(200).send({
       success: true,
       products,
     });
@@ -153,7 +153,7 @@ export const productFilterController = async (req, res) => {
 export const productCountController = async (req, res) => {
   try {
     const total = await ProductModel.find({}).estimatedDocumentCount();
-    return res.status(200).send({
+      res.status(200).send({
       success: true,
       total,
     });
@@ -171,7 +171,7 @@ export const productListController = async (req, res) => {
       .skip((page - 1) * perPage)
       .limit(perPage)
       .sort({ createdAt: -1 });
-    return res.status(200).send({
+      res.status(200).send({
       success: true,
       products,
     });
@@ -192,7 +192,7 @@ export const productSearchController = async (req, res) => {
       ],
     });
 
-    return res.status(200).send({
+      res.status(200).send({
       success: true,
       results,
     });
@@ -212,7 +212,7 @@ export const similarProductController = async (req, res) => {
       .populate("category")
       .limit(2);
 
-    return res.status(200).send(products);
+      res.status(200).send(products);
   } catch (error) {
     console.log(error);
   }
@@ -225,7 +225,7 @@ export const categoryProductController = async (req, res) => {
     const category = await categoryModel.findOne({ slug: req.params.slug });
     const product = await ProductModel.find({ category }).populate("category");
 
-    return res.status(200).send({
+      res.status(200).send({
       product,
       category,
     });
