@@ -85,6 +85,10 @@ export const getAllCategoryController = async (req, res) => {
       message: "Categories retrieved successfully",
       categories,
     });
+    res.status(200).json({
+      success:true,
+      categories
+    })
   } catch (error) {
     console.error(error);
     res.status(500).json({
