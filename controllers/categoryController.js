@@ -80,24 +80,26 @@ export const updateCategoryController = async (req, res) => {
 export const getAllCategoryController = async (req, res) => {
   try {
     const categories = await categoryModel.find({});
-    res.status(200).json({
+
+    if (!categories || categories.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No categories found",
+      });
+    }
+
+    return res.status(200).json({
       success: true,
-      message: "Categories retrieved successfully",
       categories,
     });
-    res.status(200).json({
-      success:true,
-      categories
-    })
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Error fetching categories",
-      error,
+      error: error.message,
     });
   }
 };
+
 
 // GET SINGLE CATEGORY
 export const getSingleCategoryController = async (req, res) => {
