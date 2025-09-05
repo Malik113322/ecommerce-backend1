@@ -259,7 +259,7 @@ export const stripePaymentController = async (req, res) => {
         product_data: { name: p.name },
         unit_amount: p.price * 100,
       },
-      quantity: p.qty,
+      quantity: p.qty
     }));
 
     const session = await stripe.checkout.sessions.create({
@@ -273,6 +273,6 @@ export const stripePaymentController = async (req, res) => {
     res.status(200).json({ id: session.id });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Stripe payment error" });
+    res.status(500).json({ success: false, message: "Stripe payment err" });
   }
 };
