@@ -8,6 +8,7 @@ import authRoute from "./routes/authRoute.js";
 import categoryRoute from "./routes/categoryRoute.js";
 import productRoutes from "./routes/productRoutes.js";
 import fileupload from "express-fileupload";
+import orderRoute from "./routes/orderRoutes.js";
 
 
 
@@ -16,7 +17,6 @@ dotenv.config();
 // rest object
 const app = express();
 app.use(cors());
-
 
 // database config
 connectDB();
@@ -33,6 +33,7 @@ app.use(morgan("dev"));
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/category", categoryRoute);
 app.use("/api/v1/product", productRoutes);
+app.use(orderRoute);
 
 app.get("/", (req, res)=>{
   res.json({message:"working"})

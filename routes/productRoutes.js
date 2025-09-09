@@ -1,6 +1,7 @@
 import express from "express";
 import {
   categoryProductController,
+  checkSession,
   createProductController,
   deleteProductController,
   getProductController,
@@ -57,5 +58,6 @@ router.get("/category-product/:slug", categoryProductController);
 // payment routes
 
 router.post('/api/create-checkout-session', stripePaymentController);
+router.get("/api/stripe/session-status/:sessionId", checkSession );
 
 export default router;
