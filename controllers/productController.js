@@ -275,3 +275,26 @@ export const stripePaymentController = async (req, res) => {
     res.status(500).json({ success: false, message: "Stripe payment err" });
   }
 };
+
+
+
+// Get checkout session details
+ export const checkSession = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ["payment_intent", "line_items"],
+    });
+
+    res.json({
+      success: true,
+      session,
+    });
+  } catch (error) {
+    console.error("Stripe Session Error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch session" });
+  }
+}
+
+
