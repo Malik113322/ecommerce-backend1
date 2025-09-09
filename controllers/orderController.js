@@ -3,7 +3,6 @@ import Orders from "../models/orderModel.js";
 export const createOrderController = async (req, res) => {
   try {
     const { products, payment, buyerId } = req.body;
-
     const order = new Orders({
       products,
       payment,
