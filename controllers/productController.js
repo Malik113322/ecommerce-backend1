@@ -4,8 +4,9 @@ import slugify from "slugify";
 import categoryModel from "../models/categoryModel.js";
 import dotenv from "dotenv";
 import Stripe from "stripe";
+import { STATUS_CODES, MESSAGES } from "../constants/index.js";
 
-dotenv.config(); // Fixed dotenv usage
+dotenv.config();
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
@@ -17,17 +18,19 @@ cloudinary.config({
   api_secret: process.env.PRIVATE_KEY_CLOUDINARY,
 });
 
-// CREATE PRODUCT
+// ======================== CREATE PRODUCT ========================
 export const createProductController = async (req, res) => {
   try {
     const { name, description, price, category, quantity, shipping } = req.body;
 
     if (!req.files || !req.files.image) {
-      return res.status(400).json({ success: false, message: "Image is required" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        success: false,
+        message: MESSAGES.PRODUCT.IMAGE_REQUIRED,
+      });
     }
 
     const file = req.files.image;
-
     const result = await cloudinary.uploader.upload(file.tempFilePath);
 
     const product = new ProductModel({
@@ -43,57 +46,69 @@ export const createProductController = async (req, res) => {
 
     await product.save();
 
-    res.status(201).json({
+    res.status(STATUS_CODES.CREATED).json({
       success: true,
-      message: "Product created successfully",
+      message: MESSAGES.PRODUCT.CREATED_SUCCESS,
       product,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error creating product" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.CREATE_ERROR,
+    });
   }
 };
 
-// GET ALL PRODUCTS
+// ======================== GET ALL PRODUCTS ========================
 export const getProductController = async (req, res) => {
   try {
     const products = await ProductModel.find({})
       .populate("category")
       .sort({ createdAt: -1 });
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
-      message: "Products retrieved successfully",
+      message: MESSAGES.PRODUCT.RETRIEVED_SUCCESS,
       total: products.length,
       products,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error fetching products" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.FETCH_ERROR,
+    });
   }
 };
 
-// GET SINGLE PRODUCT
+// ======================== GET SINGLE PRODUCT ========================
 export const getSingleProductController = async (req, res) => {
   try {
     const product = await ProductModel.findOne({ slug: req.params.slug });
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        success: false,
+        message: MESSAGES.PRODUCT.NOT_FOUND,
+      });
     }
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
-      message: "Product retrieved successfully",
+      message: MESSAGES.PRODUCT.RETRIEVED_SUCCESS,
       product,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error fetching product" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.FETCH_SINGLE_ERROR,
+    });
   }
 };
 
-// UPDATE PRODUCT
+// ======================== UPDATE PRODUCT ========================
 export const updateProductController = async (req, res) => {
   try {
     const { name, description, price, quantity, shipping, category } = req.body;
@@ -106,42 +121,54 @@ export const updateProductController = async (req, res) => {
     );
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        success: false,
+        message: MESSAGES.PRODUCT.NOT_FOUND,
+      });
     }
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
-      message: "Product updated successfully",
+      message: MESSAGES.PRODUCT.UPDATED_SUCCESS,
       product,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error updating product" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.UPDATE_ERROR,
+    });
   }
 };
 
-// DELETE PRODUCT
+// ======================== DELETE PRODUCT ========================
 export const deleteProductController = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await ProductModel.findByIdAndDelete(id);
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        success: false,
+        message: MESSAGES.PRODUCT.NOT_FOUND,
+      });
     }
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
-      message: "Product deleted successfully",
+      message: MESSAGES.PRODUCT.DELETED_SUCCESS,
       product,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error deleting product" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.DELETE_ERROR,
+    });
   }
 };
 
-// FILTER PRODUCTS
+// ======================== FILTER PRODUCTS ========================
 export const productFilterController = async (req, res) => {
   try {
     const { checked, radio } = req.body;
@@ -152,26 +179,32 @@ export const productFilterController = async (req, res) => {
 
     const products = await ProductModel.find(args);
 
-    res.status(200).json({ success: true, products });
+    res.status(STATUS_CODES.OK).json({ success: true, products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error filtering products" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.FILTER_ERROR,
+    });
   }
 };
 
-// PRODUCT COUNT
+// ======================== PRODUCT COUNT ========================
 export const productCountController = async (req, res) => {
   try {
     const total = await ProductModel.estimatedDocumentCount();
 
-    res.status(200).json({ success: true, total });
+    res.status(STATUS_CODES.OK).json({ success: true, total });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error counting products" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.COUNT_ERROR,
+    });
   }
 };
 
-// PRODUCT LIST PER PAGE
+// ======================== PRODUCT LIST PER PAGE ========================
 export const productListController = async (req, res) => {
   try {
     const perPage = 8;
@@ -182,14 +215,17 @@ export const productListController = async (req, res) => {
       .limit(perPage)
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ success: true, products });
+    res.status(STATUS_CODES.OK).json({ success: true, products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error listing products" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.LIST_ERROR,
+    });
   }
 };
 
-// SEARCH PRODUCTS
+// ======================== SEARCH PRODUCTS ========================
 export const productSearchController = async (req, res) => {
   try {
     const { keyword } = req.params;
@@ -200,14 +236,17 @@ export const productSearchController = async (req, res) => {
       ],
     });
 
-    res.status(200).json({ success: true, results });
+    res.status(STATUS_CODES.OK).json({ success: true, results });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error searching products" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.SEARCH_ERROR,
+    });
   }
 };
 
-// SIMILAR PRODUCTS
+// ======================== SIMILAR PRODUCTS ========================
 export const similarProductController = async (req, res) => {
   try {
     const { pid, cid } = req.params;
@@ -219,37 +258,49 @@ export const similarProductController = async (req, res) => {
       .populate("category")
       .limit(2);
 
-    res.status(200).json(products);
+    res.status(STATUS_CODES.OK).json(products);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error fetching similar products" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.SIMILAR_FETCH_ERROR,
+    });
   }
 };
 
-// CATEGORY BASED PRODUCTS
+// ======================== CATEGORY BASED PRODUCTS ========================
 export const categoryProductController = async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
     if (!category) {
-      return res.status(404).json({ success: false, message: "Category not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({
+        success: false,
+        message: MESSAGES.CATEGORY.NOT_FOUND,
+      });
     }
 
     const products = await ProductModel.find({ category }).populate("category");
 
-    res.status(200).json({ success: true, category, products });
+    res.status(STATUS_CODES.OK).json({ success: true, category, products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Error fetching category products" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.CATEGORY_PRODUCTS_ERROR,
+    });
   }
 };
 
-// STRIPE PAYMENT
+// ======================== STRIPE PAYMENT ========================
 export const stripePaymentController = async (req, res) => {
   try {
     const { products } = req.body;
 
     if (!products || !products.length) {
-      return res.status(400).json({ success: false, message: "No products provided" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        success: false,
+        message: MESSAGES.PRODUCT.NO_PRODUCTS_PROVIDED,
+      });
     }
 
     const lineItems = products.map((p) => ({
@@ -258,7 +309,7 @@ export const stripePaymentController = async (req, res) => {
         product_data: { name: p.name },
         unit_amount: p.price * 100,
       },
-      quantity: p.qty
+      quantity: p.qty,
     }));
 
     const session = await stripe.checkout.sessions.create({
@@ -269,17 +320,18 @@ export const stripePaymentController = async (req, res) => {
       cancel_url: `${process.env.CANCEL_URL}/cancel`,
     });
 
-    res.status(200).json({ id: session.id });
+    res.status(STATUS_CODES.OK).json({ id: session.id });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Stripe payment err" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.STRIPE_PAYMENT_ERROR,
+    });
   }
 };
 
-
-
-// Get checkout session details
- export const checkSession = async (req, res) => {
+// ======================== CHECK SESSION ========================
+export const checkSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
 
@@ -287,14 +339,15 @@ export const stripePaymentController = async (req, res) => {
       expand: ["payment_intent", "line_items"],
     });
 
-    res.json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
       session,
     });
   } catch (error) {
     console.error("Stripe Session Error:", error);
-    res.status(500).json({ success: false, message: "Failed to fetch session" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: MESSAGES.PRODUCT.SESSION_FETCH_FAILED,
+    });
   }
-}
-
-
+};
